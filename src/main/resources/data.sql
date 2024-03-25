@@ -1,0 +1,14 @@
+INSERT INTO amenity (amenity_name) VALUES ('pool');
+INSERT INTO amenity (amenity_name) VALUES ('hot tub');
+INSERT INTO amenity (amenity_name) VALUES ('spa');
+INSERT INTO amenity (amenity_name) VALUES ('complimentary breakfast');
+INSERT INTO amenity (amenity_name) VALUES ('restaurant');
+INSERT INTO amenity (amenity_name) VALUES ('good location');
+INSERT INTO amenity (amenity_name) VALUES ('gym');
+INSERT INTO amenity (amenity_name) VALUES ('low cost');
+INSERT INTO amenity (amenity_name) VALUES ('comfortable beds');
+INSERT INTO amenity (amenity_name) VALUES ('wifi');
+INSERT INTO amenity (amenity_name) VALUES ('free parking');
+INSERT INTO amenity (amenity_name) VALUES ('bar');
+INSERT INTO amenity (amenity_name) VALUES ('pet friendly');
+INSERT INTO amenity (amenity_name) VALUES ('air conditioning');

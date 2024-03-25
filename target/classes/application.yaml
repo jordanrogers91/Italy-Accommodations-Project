@@ -1,0 +1,15 @@
+spring: 
+  datasource:
+    username: italy_accommodations
+    password: italy_accommodations
+    url: jdbc:mysql://localhost:3306/italy_accommodations
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource-initialization: true
+    
+  sql:
+    init:
+      mode: never
