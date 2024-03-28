@@ -8,6 +8,6 @@ import italy.accommodations.entity.City;
 
 public interface CityDao extends JpaRepository<City, Long> {
 
-	Optional<City> findCityByCityName(String cityName);
+	Optional<City> findByCityName(String cityName);
 
 }

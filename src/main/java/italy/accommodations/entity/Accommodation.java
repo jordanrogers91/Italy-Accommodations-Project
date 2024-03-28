@@ -32,7 +32,7 @@ public class Accommodation {
 	private String accommodationAddress;
 	
 	private String accommodationPhoneNumber;
-	private Double accommodationRating;
+	private int accommodationRating;
 	
 	
 	@EqualsAndHashCode.Exclude

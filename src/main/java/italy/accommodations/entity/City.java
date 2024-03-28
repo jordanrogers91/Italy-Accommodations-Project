@@ -21,9 +21,10 @@ public class City {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long cityId;
-	//unique name?
+	
 	@Column(unique = true)
 	private String cityName;
+	
 	private String cityArea;
 	
 	@EqualsAndHashCode.Exclude

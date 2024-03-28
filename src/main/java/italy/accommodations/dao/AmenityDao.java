@@ -8,6 +8,8 @@ import italy.accommodations.entity.Amenity;
 
 public interface AmenityDao extends JpaRepository<Amenity, Long> {
 
-	Set<Amenity> findAllByAmenityId(Set<String> amenities);
+
+	Set<Amenity> findAllByAmenityIn(Set<String> amenities);
+
 
 }

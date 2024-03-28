@@ -1,8 +1,11 @@
 package italy.accommodations.contoller;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,34 +15,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import italy.accommodations.model.AccommodationData;
+import italy.accommodations.model.AccommodationData.AmenityData;
 import italy.accommodations.model.CityData;
-import italy.accommodations.model.CityData.AccommodationData;
-import italy.accommodations.model.CityData.AmenityData;
 import italy.accommodations.service.CityService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/city")
+@RequestMapping("/italy_accommodations")
 @Slf4j
 public class CityController {
 
+	@Autowired
 	private CityService cityService;
 
-	@PostMapping
+	@PostMapping("/city")
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public CityData insertCity(@RequestBody CityData cityData) {
-		log.info("Creating city with ID= {}", cityData);
+		log.info("Creating city {}", cityData);
 		return cityService.saveCity(cityData);
 	}
 
-	@GetMapping("/{cityId}")
+	@GetMapping("city/{cityId}")
 	public CityData retrieveCityById(@PathVariable Long cityId) {
 		log.info("Retrieving city with ID= {}", cityId);
 		return cityService.retrieveCityById(cityId);
 
 	}
 
-	@PostMapping("/{cityId}/accommodation")
+	@PostMapping("/city/{cityId}/accommodation")
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public AccommodationData insertAccommodation(@PathVariable Long cityId,
 			@RequestBody AccommodationData accommodationData) {
@@ -49,23 +53,38 @@ public class CityController {
 		return cityService.saveAccommodation(cityId, accommodationData);
 	}
 
-	@PutMapping("/{cityId}/accommodation/{accommodationId}")
-	public AccommodationData updateAccommodation(@PathVariable Long accommodationId, @PathVariable Long cityId,
+	@PutMapping("/city/{cityId}/accommodation/{accommodationId}")
+	public AccommodationData updateAccommodation(@PathVariable Long cityId, @PathVariable Long accommodationId,
 			@RequestBody AccommodationData accommodationData) {
 		accommodationData.setAccommodationId(accommodationId);
-		log.info("Updating accommodation with ID= {} for city with ID = {}", accommodationId, cityId);
+		log.info("Updating accommodation with ID= {} for city with ID= {}", accommodationId, cityId);
 		return cityService.saveAccommodation(cityId, accommodationData);
 	}
 
-	/*@GetMapping("/{cityId}/accommodation")
-	public List<AccommodationData> retrieveAllAccommodations(@PathVariable Long cityId) {
-		log.info("Retrieving all accommodations with city ID= {}", cityId);
-		return cityService.retrieveAllAccommodations(cityId); 
-	} */
+	@GetMapping("city/{cityId}/accommodation")
+	public Set<AccommodationData> retrieveAllAccommodationsForACity(@PathVariable Long cityId) {
+		log.info("Retrieving all accommodations for city with ID= {}", cityId);
+		return cityService.retrieveAllAccommodationsForACity(cityId);
+	}
+
+	@GetMapping("/city/{cityId}/accommodation/{accommodationId}")
+	public AccommodationData retrieveAccommodationById(@PathVariable Long cityId, @PathVariable Long accommodationId) {
+		log.info("Retrieving accommodation with ID= {} for city with ID= {}", accommodationId, cityId);
+		return cityService.retrieveAccommodationById(cityId, accommodationId);
+	}
+
+	@DeleteMapping("/accommodation/{accommodationId}")
+	public Map<String, String> deleteAccommodationById(@PathVariable Long accommodationId) {
+		log.info("Deleting accommodation with ID= {}", accommodationId);
+		cityService.deleteAccommodationById(accommodationId);
+		return Map.of("message", "Deletion of accommodation with ID= " + accommodationId + " was successful.");
+	}
 
 	@GetMapping("/{accommodationId}/amenity")
-	public List<AmenityData> retrieveAllAmenities(@PathVariable Long accommodationId) {
-		log.info("Retrieving all amenites for accommodation with ID=" + accommodationId);
-		return cityService.retrieveAllAmenities(accommodationId);
+	public Set<AmenityData> retrieveAmenitiesforAccommodation(@PathVariable Long accommodationId) {
+		log.info("Retrieving amenitites from accommodation with ID= {}", accommodationId);
+		return cityService.retrieveAllAmenitiesForAccommodation(accommodationId);
+		
 	}
+
 }

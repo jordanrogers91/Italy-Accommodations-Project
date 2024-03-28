@@ -1,7 +1,6 @@
 package italy.accommodations.service;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,9 +17,9 @@ import italy.accommodations.dao.CityDao;
 import italy.accommodations.entity.Accommodation;
 import italy.accommodations.entity.Amenity;
 import italy.accommodations.entity.City;
+import italy.accommodations.model.AccommodationData;
+import italy.accommodations.model.AccommodationData.AmenityData;
 import italy.accommodations.model.CityData;
-import italy.accommodations.model.CityData.AccommodationData;
-import italy.accommodations.model.CityData.AmenityData;
 
 @Service
 public class CityService {
@@ -32,7 +31,7 @@ public class CityService {
 	private CityDao cityDao;
 
 	@Autowired
-	AmenityDao amenityDao;
+	private AmenityDao amenityDao;
 
 	@Transactional(readOnly = false)
 	public CityData saveCity(CityData cityData) {
@@ -53,10 +52,9 @@ public class CityService {
 	private City findOrCreateCity(Long cityId, String cityName) {
 		City city;
 		if (Objects.isNull(cityId)) {
-			Optional<City> opCity = cityDao.findCityByCityName(cityName);
-
-			if (opCity.isPresent()) {
-				throw new DuplicateKeyException("City with name =" + cityName + " already exists.");
+			Optional<City> optCity = cityDao.findByCityName(cityName);
+			if (optCity.isPresent()) {
+				throw new DuplicateKeyException("city with name " + cityName + "already exists.");
 			}
 			city = new City();
 		} else {
@@ -76,29 +74,16 @@ public class CityService {
 		return new CityData(city);
 	}
 
-	@Transactional(readOnly = true)
-	public List<AmenityData> retrieveAllAmenities(Long accommodationId) {
-		Accommodation accommodation = findAccommodationById(accommodationId);
-		List<Amenity> amenities = amenityDao.findAll();
-		List<AmenityData> response = new LinkedList<>();
-		for (Amenity amenity : amenities) {
-			if (amenity.getAccommodations() == accommodation) {
-				response.add(new AmenityData(amenity));
-			}
-
-		}
-		return response;
-	}
-
 	private Accommodation findAccommodationById(Long accommodationId) {
-		return accommodationDao.findById(accommodationId).orElseThrow(() -> new NoSuchElementException("Accommodation with ID=" + accommodationId + " does not exist."));
+		return accommodationDao.findById(accommodationId).orElseThrow(
+				() -> new NoSuchElementException("Accommodation with ID=" + accommodationId + " does not exist."));
 	}
 
 	@Transactional(readOnly = false)
 	public AccommodationData saveAccommodation(Long cityId, AccommodationData accommodationData) {
 		City city = findCityById(cityId);
 
-		Set<Amenity> amenities = amenityDao.findAllByAmenityId(accommodationData.getAmenities());
+		Set<Amenity> amenities = amenityDao.findAllByAmenityIn(accommodationData.getAmenities());
 
 		Accommodation accommodation = findOrCreateAccommodation(accommodationData.getAccommodationId());
 
@@ -136,9 +121,46 @@ public class CityService {
 		return accommodation;
 	}
 
-	/*public List<AccommodationData> retrieveAllAccommodations(Long cityId) {
-		// TODO Auto-generated method stub
-		return null;
-	} */
+	@Transactional(readOnly = true)
+	public Set<AccommodationData> retrieveAllAccommodationsForACity(Long cityId) {
+		City city = findCityById(cityId);
+		Set<Accommodation> accommodations = city.getAccommodations();
+		Set<AccommodationData> response = new HashSet<>();
+		for (Accommodation accommodation : accommodations) {
+			response.add(new AccommodationData(accommodation));
+		}
+		return response;
+
+	}
+
+	@Transactional(readOnly = true)
+	public AccommodationData retrieveAccommodationById(Long cityId, Long accommodationId) {
+		findCityById(cityId);
+		Accommodation accommodation = findAccommodationById(accommodationId);
+		if (accommodation.getCity().getCityId() != cityId) {
+			throw new IllegalStateException(
+					"accommodation with ID= " + accommodationId + "is not in city with ID = " + cityId);
+		}
+		return new AccommodationData(accommodation);
+	}
+
+	@Transactional(readOnly = false)
+	public void deleteAccommodationById(Long accommodationId) {
+		Accommodation accommodation = findAccommodationById(accommodationId);
+		accommodationDao.delete(accommodation);
+
+	}
+
+	@Transactional(readOnly = true)
+	public Set<AmenityData> retrieveAllAmenitiesForAccommodation(Long accommodationId) {
+		Accommodation accommodation = findAccommodationById(accommodationId);
+		Set<Amenity> amenities = accommodation.getAmenities();
+		Set<AmenityData> response = new HashSet<>();
+		for(Amenity amenity : amenities) {
+			response.add(new AmenityData(amenity));
+		}
+		return response;
+	}
+
 
 }

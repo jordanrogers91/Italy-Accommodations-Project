@@ -21,7 +21,7 @@ public class Amenity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long amenityId;
 	
-	private String amenityName;
+	private String amenity;
 	
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude

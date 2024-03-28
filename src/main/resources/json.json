@@ -1,0 +1,15 @@
+{
+  "accommodationName": "Hotel Villa San Lorenzo Maria",
+  "accommodationAddress": "Via dei Liguri, 7, 00185 Roma RM, Italy",
+  "accommodationPhoneNumber": "+39 06 446 9988",
+  "accommodationRating": "4",
+  "amenities": [
+    "low cost", "good location", "restaurant", "bar", "wifi", "free parking", "pet friendly", "air conditioning"
+  ]
+}
+
+
+{
+  "cityName": "Rome",
+  "cityArea": "Central"
+}
